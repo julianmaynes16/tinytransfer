@@ -1,6 +1,7 @@
 //
 // Created by dylan on 8/12/23.
 //
+#include "pybind11/pybind11.h"
 #include <cstring>
 
 #include "tinyTransfer.h"
@@ -33,7 +34,14 @@ uint16_t fletcher16(const uint8_t* data, uint64_t length){
     return (c1 << 8 | c0);
 }
 
+PYBIND11_MODULE(_C,m) {
+    m.doc() = "Python bindings for tinytransfer";
+
+    m.def("fletcher16", &fletcher16, "Checksum calculation algorithm");
+}
+
 TinyTransferUpdatePacket::TinyTransferUpdatePacket(uint8_t* _data, uint16_t _length, uint32_t _packetId, char* _log, uint16_t _logSize, bool compressed, bool isIntegrator) {
+    startOfHeader = TINY_TRANSFER_UPDATE_SOH;
     packetFlags = 0;
     
     if (compressed) {
@@ -170,7 +178,7 @@ bool TinyTransferUpdateParser::processByte(uint8_t byte){
 
 
 TinyTransferRPCPacket::TinyTransferRPCPacket() {
-
+    startOfHeader = TINY_TRANSFER_RPC_SOH;
 }
 
 TinyTransferRPCPacket::TinyTransferRPCPacket(uint8_t* _data) {
@@ -178,6 +186,8 @@ TinyTransferRPCPacket::TinyTransferRPCPacket(uint8_t* _data) {
     memcpy(&headerChecksum, _data + sizeof(header), sizeof(headerChecksum));
     uint16_t copyLength = procArgsLength > TINY_TRANSFER_RPC_MAX_ARGS_SIZE ? TINY_TRANSFER_RPC_MAX_ARGS_SIZE : procArgsLength;
     memcpy(args, _data + sizeof(header) + sizeof(headerChecksum), copyLength);
+    startOfHeader = TINY_TRANSFER_RPC_SOH;
+
 }
 
 bool TinyTransferRPCPacket::isValid() {

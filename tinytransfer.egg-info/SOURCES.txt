@@ -1,0 +1,10 @@
+LICENSE
+setup.py
+./tinytransfer/__init__.py
+tinytransfer/__init__.py
+tinytransfer.egg-info/PKG-INFO
+tinytransfer.egg-info/SOURCES.txt
+tinytransfer.egg-info/dependency_links.txt
+tinytransfer.egg-info/not-zip-safe
+tinytransfer.egg-info/requires.txt
+tinytransfer.egg-info/top_level.txt

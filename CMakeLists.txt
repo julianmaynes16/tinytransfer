@@ -10,12 +10,26 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
-add_library(heatshrink ${CMAKE_CURRENT_SOURCE_DIR}/heatshrink/heatshrink_encoder.c ${CMAKE_CURRENT_SOURCE_DIR}/heatshrink/heatshrink_decoder.c)
-add_library(tinytransfer ${CMAKE_CURRENT_SOURCE_DIR}/tinytransfer.cpp)
+set(PYBIND11_FINDPYTHON ON)
 
+# Find Python and its development components
+find_package(Python COMPONENTS Interpreter Development REQUIRED)
+
+# Add pybind11 subdirectory
+add_subdirectory(extern/pybind11)
+
+# Add heatshrink library
+add_library(heatshrink 
+    ${CMAKE_CURRENT_SOURCE_DIR}/heatshrink/heatshrink_encoder.c ${CMAKE_CURRENT_SOURCE_DIR}/heatshrink/heatshrink_decoder.c)
 target_include_directories(heatshrink PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/heatshrink)
+
+# Add tinytransfer library
+add_library(tinytransfer ${CMAKE_CURRENT_SOURCE_DIR}/tinytransfer.cpp)
 target_include_directories(tinytransfer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_compile_options(heatshrink PRIVATE -Wno-unknown-pragmas)
+# Link heatshrink and pybind11 to tinytransfer
+target_link_libraries(tinytransfer PUBLIC heatshrink pybind11::module)
 
-target_link_libraries(tinytransfer heatshrink)
+# Create the Python module
+pybind11_add_module(_C tinytransfer.cpp)
+target_link_libraries(_C PRIVATE tinytransfer)

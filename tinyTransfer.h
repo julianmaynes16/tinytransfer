@@ -47,7 +47,7 @@ struct TinyTransferUpdatePacket {
     public:
         union {
             struct {
-                uint32_t startOfHeader = TINY_TRANSFER_UPDATE_SOH;
+                uint32_t startOfHeader;
                 uint32_t packetId;
                 uint16_t packetFlags;
                 uint16_t payloadSize;
@@ -95,7 +95,7 @@ struct TinyTransferRPCPacket {
     public:
         union {
             struct {
-                uint32_t startOfHeader = TINY_TRANSFER_RPC_SOH;
+                uint32_t startOfHeader;
                 uint32_t packetNonce;
                 uint16_t procId;
                 uint16_t procArgsLength;
