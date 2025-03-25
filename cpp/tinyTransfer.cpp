@@ -1,7 +1,6 @@
 //
 // Created by dylan on 8/12/23.
 //
-#include "pybind11/pybind11.h"
 #include <cstring>
 
 #include "tinyTransfer.h"
@@ -32,12 +31,6 @@ uint16_t fletcher16(const uint8_t* data, uint64_t length){
         c1 = c1 % 255;
     }
     return (c1 << 8 | c0);
-}
-
-PYBIND11_MODULE(_C,m) {
-    m.doc() = "Python bindings for tinytransfer";
-
-    m.def("fletcher16", &fletcher16, "Checksum calculation algorithm");
 }
 
 TinyTransferUpdatePacket::TinyTransferUpdatePacket(uint8_t* _data, uint16_t _length, uint32_t _packetId, char* _log, uint16_t _logSize, bool compressed, bool isIntegrator) {
